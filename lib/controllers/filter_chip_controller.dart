@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app/services/storage_service.dart';
 
 class FilterChipController extends ChangeNotifier {
-  Set<String> selectedCategories = Set<String>();
+  Set<String> selectedCategories = <String>{};
 
   // Cargar datos persistidos
   Future<void> loadSelectedCategories() async {
