@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:test_app/controllers/filter_chip_controller.dart';
 import 'package:test_app/screens/category_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-void main() {
-  runApp(const ChipApp());
+Future<void> main() async {
+  await dotenv.load();
+  runApp(
+    ChangeNotifierProvider(create: (_) => FilterChipController(),
+    child: ChipApp()),
+    );
 }
 
 class ChipApp extends StatelessWidget {

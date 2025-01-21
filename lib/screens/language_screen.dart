@@ -66,6 +66,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               style: textTheme.titleLarge),
           const SizedBox(height: 5.0),
           Wrap(
+            alignment: WrapAlignment.center,
             spacing: 5.0,
             children: languages.map((language) {
               return LanguageChoiceChip(

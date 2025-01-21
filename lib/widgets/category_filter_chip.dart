@@ -1,36 +1,52 @@
 import 'package:flutter/material.dart';
-
-// Enum para los tipos de ejercicio
-enum CategoryFilter { walking, running, cycling, hiking }
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:test_app/controllers/filter_chip_controller.dart';
 
 class CategoryFilterChip extends StatelessWidget {
-  final Set<CategoryFilter> filters;
-  final ValueChanged<Set<CategoryFilter>> onFilterChanged;
 
   const CategoryFilterChip({
     super.key,
-    required this.filters,
-    required this.onFilterChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 5.0,
-      children: CategoryFilter.values.map((CategoryFilter exercise) {
-        return FilterChip(
-          label: Text(exercise.name),
-          selected: filters.contains(exercise),
-          onSelected: (bool selected) {
-            if (selected) {
-              filters.add(exercise);
-            } else {
-              filters.remove(exercise);
-            }
-            onFilterChanged(filters); // Pasamos los filtros seleccionados hacia arriba
-          },
-        );
-      }).toList(),
-    );
+    final List<String> categories = [
+      AppLocalizations.of(context)!.category_technology,
+      AppLocalizations.of(context)!.category_science,
+      AppLocalizations.of(context)!.category_entertainment,
+      AppLocalizations.of(context)!.category_health,
+      AppLocalizations.of(context)!.category_education,
+      AppLocalizations.of(context)!.category_sports,
+      AppLocalizations.of(context)!.category_politics,
+      AppLocalizations.of(context)!.category_economy,
+      AppLocalizations.of(context)!.category_art_culture,
+      AppLocalizations.of(context)!.category_travel,
+      AppLocalizations.of(context)!.category_food,
+      AppLocalizations.of(context)!.category_history,
+      AppLocalizations.of(context)!.category_fashion,
+      AppLocalizations.of(context)!.category_music,
+      AppLocalizations.of(context)!.category_environment,
+    ];
+
+    return Consumer<FilterChipController>(builder: (context, controller, _) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8.0,
+          children: categories.map((String category) {
+            final isSelected = controller.selectedCategories.contains(category);
+            return FilterChip(
+              label: Text(category),
+              selected: isSelected,
+              onSelected: (bool selected) {
+                controller.toggleSelection(category);
+              },
+            );
+          }).toList(),
+        ),
+      );
+    });
   }
 }

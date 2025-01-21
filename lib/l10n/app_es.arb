@@ -6,5 +6,20 @@
   "languageName_fr": "Francés",
   "languageName_it": "Italiano",
   "languageProficiencyTitle": "Selecciona tu nivel de competencia",
-  "podcastListTitle": "Tu Selección de Podcasts"
+  "podcastListTitle": "Tu Selección de Podcasts",
+  "category_technology": "Tecnología",
+  "category_science": "Ciencia",
+  "category_entertainment": "Entretenimiento",
+  "category_health": "Salud",
+  "category_education": "Educación",
+  "category_sports": "Deportes",
+  "category_politics": "Política",
+  "category_economy": "Economía",
+  "category_art_culture": "Arte y Cultura",
+  "category_travel": "Viajes",
+  "category_food": "Comida",
+  "category_history": "Historia",
+  "category_fashion": "Moda",
+  "category_music": "Música",
+  "category_environment": "Medio Ambiente"
 }
