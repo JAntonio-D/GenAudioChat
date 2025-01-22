@@ -30,7 +30,7 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
   void _startDebounce(Set<String> selectedCategories) {
     if (selectedCategories.isEmpty) return;
     _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 1000), () {
+    _debounceTimer = Timer(const Duration(milliseconds: 1500), () {
       if (_shouldFetchCategories(selectedCategories)) {
         context.read<LoaderController>().showLoader();
         _fetchRelatedCategories(selectedCategories);
@@ -58,15 +58,9 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
           ? selectedCategories.join(', ')
           : selectedCategories.first;
       print('Selected Categories: ${categories}');
-      final response = [
-        "games",
-        "RPG",
-        "Fantasy",
-        "Smartphone",
-        "PS5",
-        "Nintendo Switch"
-      ]; // await ControlledGeneration().getCategories(categories);
-      await Future.delayed(Duration(seconds: 2));
+      final currentLocale = AppLocalizations.of(context)?.localeName ?? '';
+      final response =  await ControlledGeneration().getCategories(categories, currentLocale);
+      print('Response: ${response}');
       setState(() {
         allCategories = {
           ...allCategories,
