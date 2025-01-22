@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:test_app/models/podcast.dart';
-import 'package:test_app/widgets/podcast_list.dart';
+import 'package:test_app/models/audio.dart';
+import 'package:test_app/widgets/audio_list.dart';
 
-class PodcastListScreen extends StatelessWidget {
-  PodcastListScreen({super.key});
-    // Lista de ejemplos de podcasts
-  final List<Podcast> podcasts = [
-    Podcast(
+class AudioListScreen extends StatelessWidget {
+  AudioListScreen({super.key});
+
+  final List<Audio> audios = [
+    Audio(
       title: 'Aprende Flutter',
       description: 'Un podcast sobre Flutter y desarrollo móvil.',
     ),
-    Podcast(
+    Audio(
       title: 'Tecnología al Día',
       description: 'Noticias de tecnología y tendencias actuales.',
     ),
-    Podcast(
+    Audio(
       title: 'Historia del Mundo',
       description: 'Explora la historia a través de relatos fascinantes.',
     ),
-    // Agrega más podcasts aquí...
+    // Agrega más audios aquí...
   ];
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.podcastListTitle),
+        title: Text(AppLocalizations.of(context)!.audioListTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: PodcastList(podcasts: podcasts),
+          child: AudioList(audios: audios),
         ),
       ),
     );

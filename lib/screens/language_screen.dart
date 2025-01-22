@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:test_app/controllers/language_controller.dart';
-import 'package:test_app/screens/podcast_list_screen.dart';
+import 'package:test_app/screens/audio_list_screen.dart';
 import 'package:test_app/widgets/button.dart';
 import 'package:test_app/widgets/language_chip.dart';
 
@@ -104,7 +104,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => PodcastListScreen()),
+                              builder: (context) => AudioListScreen()),
                         );
                       })
                 ],

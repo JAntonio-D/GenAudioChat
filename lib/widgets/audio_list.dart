@@ -1,29 +1,28 @@
-// widgets/podcast_list_widget.dart
 import 'package:flutter/material.dart';
-import 'package:test_app/models/podcast.dart';
+import 'package:test_app/models/audio.dart';
 
 
-class PodcastList extends StatelessWidget {  // Cambié el nombre aquí a PodcastList (sin 'Widget')
-  final List<Podcast> podcasts;
+class AudioList extends StatelessWidget {
+  final List<Audio> audios;
 
-  const PodcastList({super.key, required this.podcasts});
+  const AudioList({super.key, required this.audios});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: podcasts.length,
+      itemCount: audios.length,
       itemBuilder: (context, index) {
-        final podcast = podcasts[index];
-        return PodcastTile(podcast: podcast); // Usamos el widget PodcastTile
+        final audio = audios[index];
+        return AudioTile(audio: audio);
       },
     );
   }
 }
 
-class PodcastTile extends StatelessWidget { // PodcastTile sigue igual
-  final Podcast podcast;
+class AudioTile extends StatelessWidget {
+  final Audio audio;
 
-  const PodcastTile({super.key, required this.podcast});
+  const AudioTile({super.key, required this.audio});
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +40,21 @@ class PodcastTile extends StatelessWidget { // PodcastTile sigue igual
             iconSize: 30,
             color: Colors.white,
             onPressed: () {
-                print("Reproduciendo podcast: ${podcast.title}");
+                print("Reproduciendo audio: ${audio.title}");
             },
           ),
         ),
         title: Text(
-          podcast.title,
+          audio.title,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          podcast.description,
+          audio.description,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         onTap: () {
-          print("Seleccionaste el podcast: ${podcast.title}");
+          print("Seleccionaste el audio: ${audio.title}");
         },
       ),
     );

@@ -1,8 +1,8 @@
-class Podcast {
+class Audio {
   final String title;
   final String description;
 
-  Podcast({
+  Audio({
     required this.title,
     required this.description,
   });
