@@ -11,11 +11,10 @@ class CategoryFilterChip extends StatefulWidget {
   const CategoryFilterChip({Key? key}) : super(key: key);
 
   @override
-  _CategoryFilterChipState createState() => _CategoryFilterChipState();
+  CategoryFilterChipState createState() => CategoryFilterChipState();
 }
 
-class _CategoryFilterChipState extends State<CategoryFilterChip> {
-  Timer? _debounceTimer;
+class CategoryFilterChipState extends State<CategoryFilterChip> {
   List<String> allCategories = [];
   Set<String> lastFetchedCategories = {};
   int apiCallCount = 0;
@@ -23,19 +22,15 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
 
   void _onCategoryToggle(String category, FilterChipController controller) {
     controller.toggleSelection(category);
-
-    _startDebounce(controller.selectedCategories);
   }
 
-  void _startDebounce(Set<String> selectedCategories) {
+  void safeFetchCategories(Set<String> selectedCategories) {
     if (selectedCategories.isEmpty) return;
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 1500), () {
-      if (_shouldFetchCategories(selectedCategories)) {
+
+if (_shouldFetchCategories(selectedCategories)) {
         context.read<LoaderController>().showLoader();
         _fetchRelatedCategories(selectedCategories);
       }
-    });
   }
 
   bool _shouldFetchCategories(Set<String> selectedCategories) {
@@ -54,12 +49,20 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
 
   Future<void> _fetchRelatedCategories(Set<String> selectedCategories) async {
     try {
-      String categories = selectedCategories.length > 1
-          ? selectedCategories.join(', ')
-          : selectedCategories.first;
+      Set<String> processedCategories = lastFetchedCategories.toSet();
+      List<String> newSelectedCategories = selectedCategories
+          .where((item) => !processedCategories.contains(item))
+          .toList();
+
+      String categories = newSelectedCategories.length > 1
+          ? newSelectedCategories.join(', ')
+          : newSelectedCategories.first;
       print('Selected Categories: ${categories}');
       final currentLocale = AppLocalizations.of(context)?.localeName ?? '';
-      final response =  await ControlledGeneration().getCategories(categories, currentLocale);
+      print('allCategories ${allCategories.toString()}');
+
+      final response = await ControlledGeneration()
+          .getCategories(categories, currentLocale, allCategories.toString());
       print('Response: ${response}');
       setState(() {
         allCategories = {
@@ -78,12 +81,6 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
   }
 
   @override
-  void dispose() {
-    _debounceTimer?.cancel();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
 
@@ -96,7 +93,7 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
     final localizations = AppLocalizations.of(context);
     final controller = context.read<FilterChipController>();
 
-    final  List<String> initialCategories = [
+    final List<String> initialCategories = [
       localizations!.category_technology,
       localizations.category_science,
       localizations.category_entertainment,
@@ -125,21 +122,31 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
 
   @override
   Widget build(BuildContext context) {
-
     return Consumer<FilterChipController>(builder: (context, controller, _) {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 8.0,
-          children: allCategories.map((String category) {
-            final isSelected = controller.selectedCategories.contains(category);
-            return FilterChip(
-              label: Text(category),
-              selected: isSelected,
-              onSelected: (_) => _onCategoryToggle(category, controller),
-            );
-          }).toList(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 50, maxHeight: 500),
+          child: Scrollbar(
+              thumbVisibility: true,
+              thickness: 4.0,
+              radius: Radius.circular(10),
+              child: SingleChildScrollView(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 8.0,
+                  children: allCategories.map((String category) {
+                    final isSelected =
+                        controller.selectedCategories.contains(category);
+                    return FilterChip(
+                      label: Text(category),
+                      selected: isSelected,
+                      onSelected: (_) =>
+                          _onCategoryToggle(category, controller),
+                    );
+                  }).toList(),
+                ),
+              )),
         ),
       );
     });

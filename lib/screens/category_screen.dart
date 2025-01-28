@@ -14,6 +14,7 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
+  final GlobalKey<CategoryFilterChipState> _childKey = GlobalKey<CategoryFilterChipState>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               Text(AppLocalizations.of(context)!.selectCategory,
                   style: textTheme.titleLarge),
               const SizedBox(height: 5.0),
-              CategoryFilterChip(),
+              CategoryFilterChip(key: _childKey),
               const SizedBox(height: 10.0),
               Consumer<FilterChipController>(
                 // Remove this
@@ -40,6 +41,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     'Tus temas: ${controller.selectedCategories.join(', ')}',
                     style: textTheme.labelLarge,
                   );
+                },
+              ),
+              Consumer<FilterChipController>(
+                builder: (context, controller, _) {
+                  return Button(
+                      buttonText: "Reload Categories", // Change this to AppLocalizations
+                      isEnabled: controller.selectedCategories.isNotEmpty,
+                      onPressed: () => _childKey.currentState?.safeFetchCategories(controller.selectedCategories)
+                         );
                 },
               ),
               Consumer<FilterChipController>(
