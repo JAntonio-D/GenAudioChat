@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_app/controllers/filter_chip_controller.dart';
+import 'package:test_app/screens/audio_list_screen.dart';
 import 'package:test_app/screens/language_screen.dart';
 import 'package:test_app/widgets/button.dart';
 import 'package:test_app/widgets/category_filter_chip.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({super.key});
+  final String navigateTo;
+  const CategoryScreen({super.key, required this.navigateTo});
 
   @override
   State<CategoryScreen> createState() => _CategoryScreenState();
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  final GlobalKey<CategoryFilterChipState> _childKey = GlobalKey<CategoryFilterChipState>();
+  late String navigateTo;
+  final GlobalKey<CategoryFilterChipState> _childKey =
+      GlobalKey<CategoryFilterChipState>();
+
+       @override
+  void initState() {
+    super.initState();
+    navigateTo = widget.navigateTo;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +34,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
         body: FutureBuilder(
       future: context.read<FilterChipController>().loadSelectedCategories(),
       builder: (context, snapshot) {
-        
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -35,34 +44,35 @@ class _CategoryScreenState extends State<CategoryScreen> {
               CategoryFilterChip(key: _childKey),
               const SizedBox(height: 10.0),
               Consumer<FilterChipController>(
-                // Remove this
-                builder: (context, controller, _) {
-                  return Text(
-                    'Tus temas: ${controller.selectedCategories.join(', ')}',
-                    style: textTheme.labelLarge,
-                  );
-                },
-              ),
-              Consumer<FilterChipController>(
                 builder: (context, controller, _) {
                   return Button(
-                      buttonText: "Reload Categories", // Change this to AppLocalizations
+                      buttonText:AppLocalizations.of(context)!.moreCategories,
                       isEnabled: controller.selectedCategories.isNotEmpty,
-                      onPressed: () => _childKey.currentState?.safeFetchCategories(controller.selectedCategories)
-                         );
+                      onPressed: () => _childKey.currentState
+                          ?.safeFetchCategories(controller.selectedCategories));
                 },
               ),
+              const SizedBox(height: 10.0),
               Consumer<FilterChipController>(
                 builder: (context, controller, _) {
                   return Button(
-                      buttonText: "Next", // Change this to AppLocalizations
+                      buttonText: AppLocalizations.of(context)!.next,
                       isEnabled: controller.selectedCategories.isNotEmpty,
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LanguageSelectionScreen()),
-                        );
+                        if (navigateTo == "AudioList") {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AudioListScreen()),
+                          );
+                        } else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    LanguageSelectionScreen()),
+                          );
+                        }
                       });
                 },
               ),

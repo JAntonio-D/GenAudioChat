@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_app/controllers/audio_controller.dart';
 import 'package:test_app/controllers/language_controller.dart';
 import 'package:test_app/controllers/loader_controller.dart';
 import 'package:test_app/models/audio.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:test_app/models/script.dart';
+import 'package:test_app/screens/script_screen.dart';
 import 'package:test_app/services/controlled_generation.dart';
 
 class AudioList extends StatelessWidget {
@@ -27,15 +30,33 @@ class AudioList extends StatelessWidget {
 class AudioTile extends StatelessWidget {
   final Audio audio;
   const AudioTile({super.key, required this.audio});
-  static const int maxApiCalls = 3;
+  static const int maxApiCalls = 1;
 
   @override
   Widget build(BuildContext context) {
     int apiCallCount = 0;
 
-    Future<void> fetchScript(String title, String description) async {
+    AudioScript? findScript(String title, String description) {
       try {
         context.read<LoaderController>().showLoader();
+
+        final audioController =
+            Provider.of<AudioController>(context, listen: false);
+
+        return audioController.findScript(title, description);
+      } catch (e) {
+        debugPrint('Error finding script: $e');
+      }
+      context.read<LoaderController>().hideLoader();
+    }
+
+    Future<AudioScript?> fetchScript(String title, String description) async {
+      try {
+        context.read<LoaderController>().showLoader();
+
+        final audioController =
+            Provider.of<AudioController>(context, listen: false);
+
         final languageController =
             Provider.of<LanguageController>(context, listen: false);
         String language = languageController.selectedLanguage!;
@@ -45,20 +66,19 @@ class AudioTile extends StatelessWidget {
             .getAudioScript(title, description, language, level);
         print('Response: ${response}');
 
-
-        // setState(() {
-        //   allCategories = {
-        //     ...allCategories,
-        //     ...response,
-        //   }.toList();
-        // });
+        if (response != null) {
+          audioController.audioScriptList.add(response);
+          await audioController.saveAudioScriptList();
+        }
 
         apiCallCount++;
         debugPrint('API call count: $apiCallCount');
+        return response;
       } catch (e) {
-        debugPrint('Error fetching related categories: $e');
+        debugPrint('Error fetching script: $e');
       }
       context.read<LoaderController>().hideLoader();
+      return null;
     }
 
     bool shouldFetchScript() {
@@ -72,23 +92,28 @@ class AudioTile extends StatelessWidget {
         return false;
       }
 
-      if (language == null || language.isEmpty ) {
+      if (language == null || language.isEmpty) {
         debugPrint('language is empty');
         return false;
       }
 
       if (level == null || level.isEmpty) {
-        debugPrint('language is empty');
+        debugPrint('level is empty');
         return false;
       }
 
       return true;
     }
 
-    void safeFetchScript(String title, String description) {
-      if (shouldFetchScript()) {
-        fetchScript(title, description);
+    Future<AudioScript?> safeFetchScript(String title, String description) async {
+      final script = findScript(title, description);
+      if (script != null) {
+        return script;
       }
+
+      // if (shouldFetchScript()) {
+      //   return await fetchScript(title, description);
+      // }
     }
 
     return Card(
@@ -120,9 +145,16 @@ class AudioTile extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        onTap: () {
+        onTap: () async {
           print("Seleccionaste el audio: ${audio.title}");
-          safeFetchScript(audio.title, audio.description);
+          final script = await safeFetchScript(audio.title, audio.description);
+          if (script != null) {
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScriptChatScreen(script: script)),
+                  );
+          }
         },
       ),
     );

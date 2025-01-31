@@ -135,6 +135,7 @@ if (_shouldFetchCategories(selectedCategories)) {
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 8.0,
+                  runSpacing: 8.0,
                   children: allCategories.map((String category) {
                     final isSelected =
                         controller.selectedCategories.contains(category);

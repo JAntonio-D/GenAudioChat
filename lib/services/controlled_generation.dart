@@ -14,7 +14,7 @@ class ControlledGeneration {
         model: 'gemini-1.5-flash',
         apiKey: apiKey,
         generationConfig:
-            GenerationConfig(responseMimeType: 'application/json'));
+            GenerationConfig(responseMimeType: 'application/json', maxOutputTokens: 3000));
 
     final String prompt = '''
 Genera una lista con un máximo de 15 sugerencias de categorías o géneros relacionadas con la Lista de temas. 
@@ -57,7 +57,7 @@ Lista de temas: ${categories}
         model: 'gemini-1.5-flash',
         apiKey: apiKey,
         generationConfig:
-            GenerationConfig(responseMimeType: 'application/json'));
+            GenerationConfig(responseMimeType: 'application/json', maxOutputTokens: 3000));
 
     final String prompt = '''
 Genera una lista de hasta 5 elementos, donde cada elemento represente una opción de audio corto (menos de 5 minutos) diseñado como una charla casual o un episodio de podcast.
@@ -101,7 +101,7 @@ La lista debe estar escrita en ${currentLocale}.
         model: 'gemini-1.5-flash',
         apiKey: apiKey,
         generationConfig:
-            GenerationConfig(responseMimeType: 'application/json'));
+            GenerationConfig(responseMimeType: 'application/json', maxOutputTokens: 3000));
 
     final String prompt = '''
 Genera un guión para una charla casual o un episodio de podcast corto, cuya duración debe ser de 3 minutos.

@@ -8,6 +8,7 @@ import 'package:test_app/controllers/loader_controller.dart';
 import 'package:test_app/models/audio.dart';
 import 'package:test_app/services/controlled_generation.dart';
 import 'package:test_app/widgets/audio_list.dart';
+import 'package:test_app/widgets/popup_menu.dart';
 
 class AudioListScreen extends StatefulWidget {
   const AudioListScreen({super.key});
@@ -18,22 +19,6 @@ class AudioListScreen extends StatefulWidget {
 
 class _AudioListScreenState extends State<AudioListScreen> {
   List<Audio> allAudios = [];
-
-  // final List<Audio> audios = [
-  //   Audio(
-  //     title: 'Aprende Flutter',
-  //     description: 'Un podcast sobre Flutter y desarrollo móvil.',
-  //   ),
-  //   Audio(
-  //     title: 'Tecnología al Día',
-  //     description: 'Noticias de tecnología y tendencias actuales.',
-  //   ),
-  //   Audio(
-  //     title: 'Historia del Mundo',
-  //     description: 'Explora la historia a través de relatos fascinantes.',
-  //   ),
-  //   // Agrega más audios aquí...
-  // ];
 
   @override
   void initState() {
@@ -59,7 +44,6 @@ class _AudioListScreenState extends State<AudioListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('build');
     Future<void> fetchAudioList() async {
        final audioController = Provider.of<AudioController>(context, listen: false);
        
@@ -102,6 +86,10 @@ class _AudioListScreenState extends State<AudioListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.audioListTitle),
+        automaticallyImplyLeading: false, 
+        actions: [
+          PopupMenu(),
+        ],
       ),
       body:
           // Padding(

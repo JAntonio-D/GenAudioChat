@@ -1,20 +1,23 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app/models/audio.dart';
 import 'package:test_app/models/languagePreferences.dart';
+import 'package:test_app/models/script.dart';
 
 class StorageService {
-  static Future<void> saveSelectedCategories(Set<String> selectedCategories) async {
+  static Future<void> saveSelectedCategories(
+      Set<String> selectedCategories) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('selectedCategories', selectedCategories.toList());
   }
 
   static Future<Set<String>> loadSelectedCategories() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String> savedCategories = prefs.getStringList('selectedCategories') ?? [];
+    final List<String> savedCategories =
+        prefs.getStringList('selectedCategories') ?? [];
     return savedCategories.toSet();
   }
 
-    static Future<void> saveSelectedLanguage(String selectedLanguage) async {
+  static Future<void> saveSelectedLanguage(String selectedLanguage) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('selectedLanguage', selectedLanguage);
   }
@@ -26,18 +29,19 @@ class StorageService {
     return LanguagePreferences(language: savedLanguage, level: savedLevel);
   }
 
-    static Future<void> saveSelectedLevel(String selectedLevel) async {
+  static Future<void> saveSelectedLevel(String selectedLevel) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('selectedLevel', selectedLevel);
   }
 
-    static Future<void> saveAudioList(List<Audio> audioList) async {
+  static Future<void> saveAudioList(List<Audio> audioList) async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> audioListJson = audioList.map((audio) => audio.toJson()).toList();
+    List<String> audioListJson =
+        audioList.map((audio) => audio.toJson()).toList();
     await prefs.setStringList('audio_list', audioListJson);
   }
 
-   static Future<List<Audio>> loadAudioList() async {
+  static Future<List<Audio>> loadAudioList() async {
     final prefs = await SharedPreferences.getInstance();
     List<String>? audioListJson = prefs.getStringList('audio_list');
 
@@ -48,4 +52,21 @@ class StorageService {
     return audioListJson.map((json) => Audio.fromPlainJson(json)).toList();
   }
 
+  static Future<void> saveAudioScriptList(List<AudioScript> scriptList) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> scriptListJson =
+        scriptList.map((script) => script.toJsonString()).toList();
+    await prefs.setStringList('script_list', scriptListJson);
+  }
+
+  static Future<List<AudioScript>> loadAudioScriptList() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String>? scriptListJson = prefs.getStringList('script_list');
+
+    if (scriptListJson == null) {
+      return [];
+    }
+
+    return scriptListJson.map((json) => AudioScript.fromJson(json)).toList();
+  }
 }

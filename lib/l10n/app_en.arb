@@ -1,5 +1,7 @@
 {
   "selectCategory": "Select what you like",
+  "moreCategories": "See more categories",
+  "next": "Continue",
   "selectLanguage": "Choose the language you want to learn",
   "languageName_es": "Spanish",
   "languageName_en": "English",
@@ -24,5 +26,7 @@
   "category_history": "History",
   "category_fashion": "Fashion",
   "category_music": "Music",
-  "category_environment": "Environment"
+  "category_environment": "Environment",
+  "explore_categories": "Explore Categories",
+  "settings": "Settings"
 }

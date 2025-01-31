@@ -24,7 +24,8 @@ Future<void> main() async {
   await Future.wait([
     categoryController.loadSelectedCategories(),
     languageController.loadLanguagesPreferences(),
-    audioController.loadAudioList()
+    audioController.loadAudioList(),
+    audioController.loadAudioScriptList(),
   ]);
 
   loaderController.hideLoader();
@@ -37,6 +38,7 @@ Future<void> main() async {
 
   print("selectedCategories ${categoryController.selectedCategories}");
   print("languageController.selectedLanguage ${languageController.selectedLanguage}");
+  print("script ${audioController.audioScriptList.length}");
 
   runApp(
     MultiProvider(
@@ -71,8 +73,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true),
       home: Stack(
         children: [
-          // isConfigurationCompleted ? AudioListScreen() : CategoryScreen(),
-          CategoryScreen(),
+            isConfigurationCompleted ? AudioListScreen() : CategoryScreen(navigateTo: ""),
+           // CategoryScreen(),
           GlobalLoader(),
         ],
       ),

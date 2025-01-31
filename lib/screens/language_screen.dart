@@ -46,9 +46,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
          ];
 
     return Scaffold(
-        appBar: AppBar(
-            // title: const Text("Segunda Pantalla"),
-            ),
         body: FutureBuilder(future: context.read<LanguageController>().loadLanguagesPreferences(),
         builder: (context, snapshot) {
           
@@ -58,7 +55,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
           children: <Widget>[
             Text(AppLocalizations.of(context)!.selectLanguage,
                 style: textTheme.titleLarge),
-            const SizedBox(height: 5.0),
+            const SizedBox(height: 20.0),
             Consumer<LanguageController>(builder: (context, controller, child) {
               return Wrap(
                 alignment: WrapAlignment.center,
@@ -73,7 +70,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 }).toList(),
               );
             }),
-            SizedBox(height: 20),
+            SizedBox(height: 50),
             Text(
               AppLocalizations.of(context)!.languageProficiencyTitle,
               style: textTheme.titleLarge,
@@ -94,8 +91,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                       );
                     }).toList(),
                   ),
+                  SizedBox(height: 20),
                   Button(
-                      buttonText: "Next",
+                      buttonText: AppLocalizations.of(context)!.next,
                       isEnabled: controller.selectedLevel != null &&
                       controller.selectedLevel!.isNotEmpty &&
                           controller.selectedLanguage != null &&
