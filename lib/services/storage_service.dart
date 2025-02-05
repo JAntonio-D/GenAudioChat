@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app/models/audio.dart';
+import 'package:test_app/models/audio_bytes.dart';
 import 'package:test_app/models/languagePreferences.dart';
 import 'package:test_app/models/script.dart';
 
@@ -63,10 +66,35 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     List<String>? scriptListJson = prefs.getStringList('script_list');
 
-    if (scriptListJson == null) {
-      return [];
-    }
+    if (scriptListJson == null) return [];
 
     return scriptListJson.map((json) => AudioScript.fromJson(json)).toList();
+  }
+
+  static Future<void> saveAudioBytesList(
+      List<AudioBytes> audioBytesList) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    List<String> audioBytesListString = audioBytesList.map((audioBytes) {
+      Map<String, dynamic> map = audioBytes.toMap();
+      String jsonString = jsonEncode(map);
+      return jsonString;
+    }).toList();
+
+    await prefs.setStringList('audioBytesList', audioBytesListString);
+  }
+
+  static Future<List<AudioBytes>> loadAudioBytesList() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String>? audioBytesListString = prefs.getStringList('audioBytesList');
+
+    if (audioBytesListString == null) return [];
+
+    List<AudioBytes> audioBytesList = audioBytesListString.map((jsonString) {
+      Map<String, dynamic> map = jsonDecode(jsonString);
+      return AudioBytes.fromMap(map);
+    }).toList();
+
+    return audioBytesList;
   }
 }

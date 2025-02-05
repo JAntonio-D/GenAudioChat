@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:test_app/models/audio.dart';
+import 'package:test_app/models/audio_bytes.dart';
 import 'package:test_app/models/script.dart';
 import 'package:test_app/services/storage_service.dart';
 
 class AudioController with ChangeNotifier {
   List<Audio> audioList = [];
   List<AudioScript> audioScriptList = [];
+  List<AudioBytes> audioBytesList = [];
 
   Future<void> loadAudioList() async {
     audioList = await StorageService.loadAudioList();
@@ -38,11 +40,21 @@ class AudioController with ChangeNotifier {
     notifyListeners();
   }
 
-  AudioScript findScript(String title, String description) {
-    return audioScriptList.firstWhere(
-      (script) => script.title == title
-     );
+  AudioScript findScript(String title) {
+    return audioScriptList.firstWhere((script) => script.title == title);
   }
 
+  Future<void> saveAudioBytes() async {
+    await StorageService.saveAudioBytesList(audioBytesList);
+    notifyListeners();
+  }
 
+  Future<void> loadAudioBytes() async {
+    audioBytesList = await StorageService.loadAudioBytesList();
+    notifyListeners();
+  }
+
+  Uint8List findBytes(String title) {
+    return audioBytesList.firstWhere((audio) => audio.title == title).bytes;
+  }
 }

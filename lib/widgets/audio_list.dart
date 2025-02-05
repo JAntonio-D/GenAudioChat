@@ -36,18 +36,19 @@ class AudioTile extends StatelessWidget {
   Widget build(BuildContext context) {
     int apiCallCount = 0;
 
-    AudioScript? findScript(String title, String description) {
+    AudioScript? findScript(String title) {
       try {
-        context.read<LoaderController>().showLoader();
-
         final audioController =
             Provider.of<AudioController>(context, listen: false);
+        if (audioController.audioScriptList.isEmpty) {
+          return null;
+        }
 
-        return audioController.findScript(title, description);
+        return audioController.findScript(title);
       } catch (e) {
         debugPrint('Error finding script: $e');
+        return null;
       }
-      context.read<LoaderController>().hideLoader();
     }
 
     Future<AudioScript?> fetchScript(String title, String description) async {
@@ -105,15 +106,16 @@ class AudioTile extends StatelessWidget {
       return true;
     }
 
-    Future<AudioScript?> safeFetchScript(String title, String description) async {
-      final script = findScript(title, description);
+    Future<AudioScript?> safeFetchScript(
+        String title, String description) async {
+      final script = findScript(title);
       if (script != null) {
         return script;
       }
 
-      // if (shouldFetchScript()) {
-      //   return await fetchScript(title, description);
-      // }
+      if (shouldFetchScript()) {
+        return await fetchScript(title, description);
+      }
     }
 
     return Card(
@@ -150,10 +152,10 @@ class AudioTile extends StatelessWidget {
           final script = await safeFetchScript(audio.title, audio.description);
           if (script != null) {
             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScriptChatScreen(script: script)),
-                  );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ScriptChatScreen(audioScript: script)),
+            );
           }
         },
       ),

@@ -1,20 +1,25 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:test_app/models/audio.dart';
 import 'package:test_app/models/script.dart';
+import 'package:http/http.dart' as http;
+import 'package:test_app/utils/audio_utils.dart';
 
 class ControlledGeneration {
   String apiKey = dotenv.env['GEN_KEY'] ?? "API Key not found";
+  String elevenApiKey = dotenv.env['ELEVEN_KEY'] ?? "API Key not found";
 
   Future<List<String>> getCategories(
       String categories, String currentLocale, String currentCategories) async {
     final model = GenerativeModel(
         model: 'gemini-1.5-flash',
         apiKey: apiKey,
-        generationConfig:
-            GenerationConfig(responseMimeType: 'application/json', maxOutputTokens: 3000));
+        generationConfig: GenerationConfig(
+            responseMimeType: 'application/json', maxOutputTokens: 3000));
 
     final String prompt = '''
 Genera una lista con un máximo de 15 sugerencias de categorías o géneros relacionadas con la Lista de temas. 
@@ -36,19 +41,18 @@ Lista de temas: ${categories}
 ''';
     final response = await model.generateContent([Content.text(prompt)]);
     print('Categorias: ${response.text}');
-    print('candidatesTokenCount: ${response.usageMetadata?.candidatesTokenCount}');
+    print(
+        'candidatesTokenCount: ${response.usageMetadata?.candidatesTokenCount}');
     print('promptTokenCount ${response.usageMetadata?.promptTokenCount}');
     print('totalTokenCount ${response.usageMetadata?.totalTokenCount}');
     print('candidates.length ${response.candidates.length}');
     print('promptFeedback ${response.promptFeedback}');
     return List<String>.from(json.decode(response.text ?? ''));
-    
+
     // print("prompt: ${prompt}");
 
     // final res = '["Tecnología móvil", "Videojuegos", "Cine"]';
     // return List<String>.from(json.decode(res));
-
-    
   }
 
   Future<List<Audio>> getAudioList(
@@ -56,8 +60,8 @@ Lista de temas: ${categories}
     final model = GenerativeModel(
         model: 'gemini-1.5-flash',
         apiKey: apiKey,
-        generationConfig:
-            GenerationConfig(responseMimeType: 'application/json', maxOutputTokens: 3000));
+        generationConfig: GenerationConfig(
+            responseMimeType: 'application/json', maxOutputTokens: 3000));
 
     final String prompt = '''
 Genera una lista de hasta 5 elementos, donde cada elemento represente una opción de audio corto (menos de 5 minutos) diseñado como una charla casual o un episodio de podcast.
@@ -79,7 +83,8 @@ La lista debe estar escrita en ${currentLocale}.
 ''';
     final response = await model.generateContent([Content.text(prompt)]);
     print('Lista de Audios: ${response.text}');
-    print('candidatesTokenCount: ${response.usageMetadata?.candidatesTokenCount}');
+    print(
+        'candidatesTokenCount: ${response.usageMetadata?.candidatesTokenCount}');
     print('promptTokenCount ${response.usageMetadata?.promptTokenCount}');
     print('totalTokenCount ${response.usageMetadata?.totalTokenCount}');
     print('candidates.length ${response.candidates.length}');
@@ -91,7 +96,7 @@ La lista debe estar escrita en ${currentLocale}.
       final List<Audio> audioList = Audio.fromJsonList(response.text!);
       return audioList;
     }
-    
+
     return [];
   }
 
@@ -100,8 +105,8 @@ La lista debe estar escrita en ${currentLocale}.
     final model = GenerativeModel(
         model: 'gemini-1.5-flash',
         apiKey: apiKey,
-        generationConfig:
-            GenerationConfig(responseMimeType: 'application/json', maxOutputTokens: 3000));
+        generationConfig: GenerationConfig(
+            responseMimeType: 'application/json', maxOutputTokens: 3000));
 
     final String prompt = '''
 Genera un guión para una charla casual o un episodio de podcast corto, cuya duración debe ser de 3 minutos.
@@ -130,6 +135,9 @@ Asegúrate de que los participantes solo tengan un nombre, sin apellidos.
 Asegúrate de que si se trata de un podcast, que ninguno sea invitado, para evitar agradecimientos o lineas similare y vayan directo al tema.
 Asegúrate de que el guión refleje el temas de forma atractiva, interesante y adecuados para una discusión de menos de 3 minutos al estilo de una charla casual o un podcast.
 Asegúrate de que el guión no refleje nunca contenido en primera persona.
+Asegúrate de que el primer speaker es de genero masculino, y el segundo de genero femenino.
+Asegúrate de que dentro de speakers solo vengan los valores Speaker1 y Speaker2.
+Asegurate de que dentro de script, speaker tenga el valor de Speaker1 o Speaker2 según sea el caso, pero en el valor de line usa un nombre de persona, que represente al Speaker, respetando su genero.
 Asegurate de que el contenido del guión refleje contenido diseñado para reforzar el estudio del idioma ${language} acorde al nivel de proficiency ${level}.
 En caso de que el nivel de proficiency sea avanzado, utiliza palabras contraídas o abreviadas, con la intención de que simule una interacción real.
 Asegúrate de que el contenido dentro de cada line esté bien escrito, y no tenga errores ortograficos o gramaticales.
@@ -147,11 +155,57 @@ El guión debe estar escrito en ${language}.
     print('promptFeedback ${response.promptFeedback}');
 
     if (response.text != null && response.text!.isNotEmpty) {
-        final audioScript = AudioScript.fromJson(response.text!);
-        return audioScript;
+      final audioScript = AudioScript.fromJson(response.text!);
+      return audioScript;
     }
-    
-    return null;
-}
 
+    return null;
+  }
+
+  // mock data
+  Uint8List stringToUint8List(String byteString) {
+    String cleanedString = byteString.replaceAll('[', '').replaceAll(']', '');
+    List<int> byteValues =
+        cleanedString.split(',').map((e) => int.parse(e.trim())).toList();
+    return Uint8List.fromList(byteValues);
+  }
+
+  Future<Uint8List> textToSpeech(String text, String speaker) async {
+    //mock
+    String fileContent = await rootBundle.loadString('audio${text}.txt');
+    Uint8List byteList = stringToUint8List(fileContent);
+    return byteList;
+
+    // String maleSpeaker = 'iP95p4xoKVk53GoZ742B';
+
+    // String femaleSpeaker = 'cgSgspJ2msm6clMCkdW9';
+
+    // final voice = speaker == 'Speaker1' ? maleSpeaker : femaleSpeaker;
+
+    // String url = 'https://api.elevenlabs.io/v1/text-to-speech/$voice';
+    // final response = await http.post(
+    //   Uri.parse(url),
+    //   headers: {
+    //     'accept': 'audio/mpeg',
+    //     'xi-api-key': elevenApiKey,
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: json.encode({
+    //     "text": text,
+    //     "model_id": "eleven_flash_v2_5",
+    //     "voice_settings": {"stability": .15, "similarity_boost": .75}
+    //   }),
+    // );
+    // print("res: ${response.toString()}");
+    // if (response.statusCode == 200) {
+    //   print("res AudioBytes: ${response.bodyBytes}");
+    //   return response.bodyBytes;
+    //   // final bytes = response.bodyBytes; //get the bytes ElevenLabs sent back
+    //   // await player.setAudioSource(MySource(
+    //   //     bytes)); //send the bytes to be read from the JustAudio library
+    //   // player.play(); //play the audio
+    // } else {
+    //   throw Exception('Failed to load audio');
+    // }
+  }
 }

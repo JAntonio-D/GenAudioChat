@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:test_app/controllers/audio_controller.dart';
+import 'package:test_app/controllers/audio_player_controller.dart';
 import 'package:test_app/controllers/filter_chip_controller.dart';
 import 'package:test_app/controllers/language_controller.dart';
 import 'package:test_app/controllers/loader_controller.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
   final categoryController = FilterChipController();
   final languageController = LanguageController();
   final audioController = AudioController();
+  final audioPlayerController = AudioPlayerController();
 
   loaderController.showLoader();
   await dotenv.load();
@@ -47,6 +49,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => loaderController),
         ChangeNotifierProvider(create: (_) => languageController),
         ChangeNotifierProvider(create: (_) => audioController),
+        ChangeNotifierProvider(create: (_) => audioPlayerController),
       ],
       child: MyApp(isConfigurationCompleted: isConfigurationCompleted),
     ),
