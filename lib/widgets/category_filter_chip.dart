@@ -18,7 +18,7 @@ class CategoryFilterChipState extends State<CategoryFilterChip> {
   List<String> allCategories = [];
   Set<String> lastFetchedCategories = {};
   int apiCallCount = 0;
-  static const int maxApiCalls = 3;
+  static const int maxApiCalls = 7;
 
   void _onCategoryToggle(String category, FilterChipController controller) {
     controller.toggleSelection(category);

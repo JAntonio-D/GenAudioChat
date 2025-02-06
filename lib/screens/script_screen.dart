@@ -133,12 +133,19 @@ class _ScriptChatScreenState extends State<ScriptChatScreen> {
 
         audioController.audioBytesList.add(audio);
         await audioController.saveAudioBytes();
-      }
 
-      setState(() {
+        setState(() {
         _isLoading = false;
         _isFinished = true;
       });
+      } else {
+        setState(() {
+        _isLoading = false;
+        _isFinished = false;
+      });
+      }
+
+      
     } catch (e) {
       debugPrint('Error fetching textToSpeech: $e');
       setState(() {

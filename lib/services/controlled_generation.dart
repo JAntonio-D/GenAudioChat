@@ -7,7 +7,6 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:test_app/models/audio.dart';
 import 'package:test_app/models/script.dart';
 import 'package:http/http.dart' as http;
-import 'package:test_app/utils/audio_utils.dart';
 
 class ControlledGeneration {
   String apiKey = dotenv.env['GEN_KEY'] ?? "API Key not found";
@@ -127,9 +126,9 @@ Asegúrate de que el contenido dentro de cada line esté bien escrito, y no teng
 El guión debe reflejar una interacción muy realista y humana, y con una secuencia congruente.
 Asegurate de que cada line termine con un punto final (.).
 Asegúrate de que el title sea igual a ${title}.
-Si en el guión hay pausas pequeñas, agrega un " - " entre las palabras donde va la pausa, para representar la pausa corta.
+Si en el guión hay pausas pequeñas, agrega un - entre las palabras donde va la pausa, para representar la pausa corta.
+Si agregaste un -, asegúrate de que sea solo uno por cada pausa, y que no debe ir inmediatamente despues de la palabra, si no separado por espacios antes y despues de la pausa.
 Si en alguna parte, algún speaker debe tener un tono dudoso, agrega "..." para prepresentar ese tono.
-
 Es muy importante que te asegures de que el contenido no tiene errores ortograficos ni gramaticales, y que pongas signos de admiración cuando sea necesario.
 El guión debe estar escrito en ${language}.
 ''';

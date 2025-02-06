@@ -58,7 +58,11 @@ class AudioController with ChangeNotifier {
     notifyListeners();
   }
 
-  Uint8List findBytes(String title) {
-    return audioBytesList.firstWhere((audio) => audio.title == title).bytes;
+  Uint8List? findBytes(String title) {
+    var index = audioBytesList.indexWhere((audio) => audio.title == title);
+    if (index != -1) {
+      return audioBytesList[index].bytes;
+    }
+    return null;
   }
 }

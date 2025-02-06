@@ -19,7 +19,7 @@ class AudioListScreen extends StatefulWidget {
 
 class _AudioListScreenState extends State<AudioListScreen> {
   List<Audio> allAudios = [];
-  int maxApiCalls = 2;
+  int maxApiCalls = 5;
   int apiCallCount = 0;
 
   @override
@@ -63,10 +63,8 @@ class _AudioListScreenState extends State<AudioListScreen> {
     Future<void> fetchAudioList() async {
       final audioController =
           Provider.of<AudioController>(context, listen: false);
+      context.read<LoaderController>().showLoader();
 
-      final loaderController =
-          Provider.of<LoaderController>(context, listen: false);
-      loaderController.showLoader();
       try {
         final languageController =
             Provider.of<LanguageController>(context, listen: false);
@@ -90,7 +88,7 @@ class _AudioListScreenState extends State<AudioListScreen> {
       } catch (e) {
         debugPrint('Error fetching audioList: ${e}');
       }
-      loaderController.hideLoader();
+      context.read<LoaderController>().hideLoader();
     }
 
     return Scaffold(

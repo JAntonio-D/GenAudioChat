@@ -66,18 +66,18 @@ class AudioTile extends StatelessWidget {
         final response = await ControlledGeneration()
             .getAudioScript(title, description, language, level);
 
-        if (response != null) {
+        if (response != null) {         
           audioController.audioScriptList.add(response.copyWith(title: title));
           await audioController.saveAudioScriptList();
         }
 
         apiCallCount++;
+        context.read<LoaderController>().hideLoader();
         return response;
       } catch (e) {
         context.read<LoaderController>().hideLoader();
         debugPrint('Error fetching script: $e');
       }
-      context.read<LoaderController>().hideLoader();
       return null;
     }
 
