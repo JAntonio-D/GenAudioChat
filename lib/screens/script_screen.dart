@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:test_app/controllers/audio_controller.dart';
 import 'package:test_app/models/audio_bytes.dart';

@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/services/audio_service.dart';
 import 'package:test_app/utils/audio_utils.dart';
 
 class AudioPlayerController extends ChangeNotifier {
@@ -50,6 +49,7 @@ class AudioPlayerController extends ChangeNotifier {
     }
   }
 
+  @override
   void dispose() {
     audioPlayer.dispose();
     super.dispose();

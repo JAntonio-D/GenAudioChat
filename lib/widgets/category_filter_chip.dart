@@ -8,7 +8,7 @@ import 'package:test_app/controllers/loader_controller.dart';
 import 'package:test_app/services/controlled_generation.dart';
 
 class CategoryFilterChip extends StatefulWidget {
-  const CategoryFilterChip({Key? key}) : super(key: key);
+  const CategoryFilterChip({super.key});
 
   @override
   CategoryFilterChipState createState() => CategoryFilterChipState();

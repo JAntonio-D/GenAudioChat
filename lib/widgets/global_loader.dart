@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../controllers/loader_controller.dart';
 
 class GlobalLoader extends StatelessWidget {
+  const GlobalLoader({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LoaderController>(

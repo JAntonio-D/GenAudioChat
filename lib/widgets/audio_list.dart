@@ -4,7 +4,6 @@ import 'package:test_app/controllers/audio_controller.dart';
 import 'package:test_app/controllers/language_controller.dart';
 import 'package:test_app/controllers/loader_controller.dart';
 import 'package:test_app/models/audio.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:test_app/models/script.dart';
 import 'package:test_app/screens/script_screen.dart';
 import 'package:test_app/services/controlled_generation.dart';
