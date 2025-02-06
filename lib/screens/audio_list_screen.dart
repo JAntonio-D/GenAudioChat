@@ -19,15 +19,16 @@ class AudioListScreen extends StatefulWidget {
 
 class _AudioListScreenState extends State<AudioListScreen> {
   List<Audio> allAudios = [];
+  int maxApiCalls = 2;
+  int apiCallCount = 0;
 
   @override
   void initState() {
     super.initState();
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeAudioList();
     });
-
   }
 
   Future<void> _initializeAudioList() async {
@@ -41,33 +42,43 @@ class _AudioListScreenState extends State<AudioListScreen> {
     });
   }
 
+  String getCategories() {
+    final categoryController =
+        Provider.of<FilterChipController>(context, listen: false);
+
+    return categoryController.selectedCategories.length > 1
+        ? categoryController.selectedCategories.join(', ')
+        : categoryController.selectedCategories.first;
+  }
+
+  String getTitleList() {
+    if (allAudios.isNotEmpty) {
+      return allAudios.map((audio) => audio.title).join(', ');
+    }
+    return '';
+  }
 
   @override
   Widget build(BuildContext context) {
     Future<void> fetchAudioList() async {
-       final audioController = Provider.of<AudioController>(context, listen: false);
-       
+      final audioController =
+          Provider.of<AudioController>(context, listen: false);
+
       final loaderController =
           Provider.of<LoaderController>(context, listen: false);
       loaderController.showLoader();
-      print('showLoader');
       try {
-        final categoryController =
-            Provider.of<FilterChipController>(context, listen: false);
         final languageController =
             Provider.of<LanguageController>(context, listen: false);
-        String categories = categoryController.selectedCategories.length > 1
-            ? categoryController.selectedCategories.join(', ')
-            : categoryController.selectedCategories.first;
         final currentLocale = AppLocalizations.of(context)?.localeName ?? '';
-        print('Categories: ${categories}');
-        print('level: ${languageController.selectedLevel}');
-        print('Language to Display: ${currentLocale}');
+        final categories = getCategories();
+        final currentTitles = getTitleList();
 
         final response = await ControlledGeneration().getAudioList(
-            categories, currentLocale, languageController.selectedLevel ?? '');
-
-        print("response: ${response}");
+            categories,
+            currentLocale,
+            languageController.selectedLevel ?? '',
+            currentTitles);
 
         audioController.audioList = [...audioController.audioList, ...response];
         await audioController.saveAudioList();
@@ -75,37 +86,34 @@ class _AudioListScreenState extends State<AudioListScreen> {
         setState(() {
           allAudios = {...allAudios, ...response}.toList();
         });
+        apiCallCount++;
       } catch (e) {
         debugPrint('Error fetching audioList: ${e}');
       }
-      // context.read<LoaderController>().hideLoader();
       loaderController.hideLoader();
-      print('hideLoader');
     }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.audioListTitle),
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
         actions: [
           PopupMenu(),
         ],
       ),
-      body:
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          // child:
-          Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             AudioList(audios: allAudios.toList()),
             SizedBox(height: 5.0),
             ElevatedButton(
-              onPressed: () async {
-                await fetchAudioList();
-              },
-              child: Text('Genera lista de Audios'),
+              onPressed: apiCallCount >= maxApiCalls
+                  ? null
+                  : () async {
+                      await fetchAudioList();
+                    },
+              child: Text(AppLocalizations.of(context)!.getAudioList),
             ),
             SizedBox(height: 30.0),
           ],

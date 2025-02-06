@@ -27,10 +27,10 @@ class CategoryFilterChipState extends State<CategoryFilterChip> {
   void safeFetchCategories(Set<String> selectedCategories) {
     if (selectedCategories.isEmpty) return;
 
-if (_shouldFetchCategories(selectedCategories)) {
-        context.read<LoaderController>().showLoader();
-        _fetchRelatedCategories(selectedCategories);
-      }
+    if (_shouldFetchCategories(selectedCategories)) {
+      context.read<LoaderController>().showLoader();
+      _fetchRelatedCategories(selectedCategories);
+    }
   }
 
   bool _shouldFetchCategories(Set<String> selectedCategories) {
@@ -57,13 +57,10 @@ if (_shouldFetchCategories(selectedCategories)) {
       String categories = newSelectedCategories.length > 1
           ? newSelectedCategories.join(', ')
           : newSelectedCategories.first;
-      print('Selected Categories: ${categories}');
       final currentLocale = AppLocalizations.of(context)?.localeName ?? '';
-      print('allCategories ${allCategories.toString()}');
 
       final response = await ControlledGeneration()
           .getCategories(categories, currentLocale, allCategories.toString());
-      print('Response: ${response}');
       setState(() {
         allCategories = {
           ...allCategories,
@@ -73,7 +70,6 @@ if (_shouldFetchCategories(selectedCategories)) {
 
       lastFetchedCategories = selectedCategories.toSet();
       apiCallCount++;
-      debugPrint('API call count: $apiCallCount');
     } catch (e) {
       debugPrint('Error fetching related categories: $e');
     }

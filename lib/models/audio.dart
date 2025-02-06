@@ -9,20 +9,18 @@ class Audio {
     required this.description,
   });
 
-   factory Audio.fromJson(Map<String, dynamic> json) {
+  factory Audio.fromJson(Map<String, dynamic> json) {
     return Audio(
       title: json['title'] as String,
       description: json['description'] as String,
     );
   }
 
-   static List<Audio> fromJsonList(String jsonString) {
+  static List<Audio> fromJsonList(String jsonString) {
     return (json.decode(jsonString) as List)
         .map((item) => Audio.fromJson(item))
         .toList();
   }
-
-
 
   Map<String, dynamic> toMap() {
     return {

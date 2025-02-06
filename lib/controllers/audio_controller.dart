@@ -40,8 +40,12 @@ class AudioController with ChangeNotifier {
     notifyListeners();
   }
 
-  AudioScript findScript(String title) {
-    return audioScriptList.firstWhere((script) => script.title == title);
+  AudioScript? findScript(String title) {
+    var index = audioScriptList.indexWhere((script) => script.title == title);
+    if (index != -1) {
+      return audioScriptList[index];
+    }
+    return null;
   }
 
   Future<void> saveAudioBytes() async {

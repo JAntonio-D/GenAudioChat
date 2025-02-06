@@ -20,7 +20,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   final GlobalKey<CategoryFilterChipState> _childKey =
       GlobalKey<CategoryFilterChipState>();
 
-       @override
+  @override
   void initState() {
     super.initState();
     navigateTo = widget.navigateTo;
@@ -46,7 +46,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               Consumer<FilterChipController>(
                 builder: (context, controller, _) {
                   return Button(
-                      buttonText:AppLocalizations.of(context)!.moreCategories,
+                      buttonText: AppLocalizations.of(context)!.moreCategories,
                       isEnabled: controller.selectedCategories.isNotEmpty,
                       onPressed: () => _childKey.currentState
                           ?.safeFetchCategories(controller.selectedCategories));

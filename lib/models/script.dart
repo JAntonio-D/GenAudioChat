@@ -22,7 +22,6 @@ class ScriptLine {
       'line': line,
     };
   }
-
 }
 
 class AudioScript {
@@ -66,4 +65,16 @@ class AudioScript {
     return jsonEncode(toJson());
   }
 
+  AudioScript copyWith(
+      {String? title,
+      String? description,
+      List<String>? speakers,
+      List<ScriptLine>? script}) {
+    return AudioScript(
+      title: title ?? this.title,
+      description: description ?? this.description,
+      speakers: speakers ?? this.speakers,
+      script: script ?? this.script,
+    );
+  }
 }

@@ -65,17 +65,16 @@ class AudioTile extends StatelessWidget {
 
         final response = await ControlledGeneration()
             .getAudioScript(title, description, language, level);
-        print('Response: ${response}');
 
         if (response != null) {
-          audioController.audioScriptList.add(response);
+          audioController.audioScriptList.add(response.copyWith(title: title));
           await audioController.saveAudioScriptList();
         }
 
         apiCallCount++;
-        debugPrint('API call count: $apiCallCount');
         return response;
       } catch (e) {
+        context.read<LoaderController>().hideLoader();
         debugPrint('Error fetching script: $e');
       }
       context.read<LoaderController>().hideLoader();
@@ -116,26 +115,13 @@ class AudioTile extends StatelessWidget {
       if (shouldFetchScript()) {
         return await fetchScript(title, description);
       }
+      return null;
     }
 
     return Card(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: ListTile(
         contentPadding: EdgeInsets.all(10),
-        leading: Ink(
-          decoration: const ShapeDecoration(
-            color: Colors.blueAccent,
-            shape: CircleBorder(),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.play_arrow),
-            iconSize: 30,
-            color: Colors.white,
-            onPressed: () {
-              print("Reproduciendo audio: ${audio.title}");
-            },
-          ),
-        ),
         title: Text(
           audio.title,
           maxLines: 2,
@@ -148,7 +134,6 @@ class AudioTile extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         onTap: () async {
-          print("Seleccionaste el audio: ${audio.title}");
           final script = await safeFetchScript(audio.title, audio.description);
           if (script != null) {
             Navigator.push(

@@ -21,7 +21,7 @@ class AudioPlayerController extends ChangeNotifier {
       _isAudioSet = true;
       notifyListeners();
     } catch (e) {
-      print("Error al configurar el audio: $e");
+      debugPrint("set audio error: $e");
     }
   }
 
@@ -29,8 +29,6 @@ class AudioPlayerController extends ChangeNotifier {
     if (isLoaded) {
       await audioPlayer.play();
       notifyListeners();
-    } else {
-      print("El audio no está cargado, por favor configure el audio primero.");
     }
   }
 
@@ -39,7 +37,7 @@ class AudioPlayerController extends ChangeNotifier {
       await audioPlayer.pause();
       notifyListeners();
     } catch (e) {
-      print("Error al pausar el audio: $e");
+      debugPrint("Pause audio error: $e");
     }
   }
 
@@ -48,7 +46,7 @@ class AudioPlayerController extends ChangeNotifier {
       await audioPlayer.stop();
       notifyListeners();
     } catch (e) {
-      print("Error al detener el audio: $e");
+      debugPrint("Stop audio error: $e");
     }
   }
 

@@ -39,78 +39,81 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       },
     ];
 
-      final List<String> proficiencyLevels = [
-         localizations.beginner,
-         localizations.intermediate,
-         localizations.advanced
-         ];
+    final List<String> proficiencyLevels = [
+      localizations.beginner,
+      localizations.intermediate,
+      localizations.advanced
+    ];
 
     return Scaffold(
-        body: FutureBuilder(future: context.read<LanguageController>().loadLanguagesPreferences(),
-        builder: (context, snapshot) {
-          
-          return Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(AppLocalizations.of(context)!.selectLanguage,
-                style: textTheme.titleLarge),
-            const SizedBox(height: 20.0),
-            Consumer<LanguageController>(builder: (context, controller, child) {
-              return Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 5.0,
-                children: languages.map((language) {
-                  return LanguageChoiceChip(
-                    languageName: language['name']!,
-                    imageAsset: language['flag']!,
-                    isSelected: controller.selectedLanguage == language['name'],
-                    onSelected: (isSelected) => controller.saveSelectedLanguage(isSelected)
-                  );
-                }).toList(),
-              );
-            }),
-            SizedBox(height: 50),
-            Text(
-              AppLocalizations.of(context)!.languageProficiencyTitle,
-              style: textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20),
-            Consumer<LanguageController>(builder: (context, controller, child) {
-              return Column(
-                children: [
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: proficiencyLevels.map((level) {
-                      return ChoiceChip(
-                        label: Text(level),
-                        selected: controller.selectedLevel == level,
-                        onSelected: (bool selected) => controller.saveSelectedLevel(selected ? level : '')
-                      );
-                    }).toList(),
+        body: FutureBuilder(
+            future:
+                context.read<LanguageController>().loadLanguagesPreferences(),
+            builder: (context, snapshot) {
+              return Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(AppLocalizations.of(context)!.selectLanguage,
+                      style: textTheme.titleLarge),
+                  const SizedBox(height: 20.0),
+                  Consumer<LanguageController>(
+                      builder: (context, controller, child) {
+                    return Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 5.0,
+                      children: languages.map((language) {
+                        return LanguageChoiceChip(
+                            languageName: language['name']!,
+                            imageAsset: language['flag']!,
+                            isSelected:
+                                controller.selectedLanguage == language['name'],
+                            onSelected: (isSelected) =>
+                                controller.saveSelectedLanguage(isSelected));
+                      }).toList(),
+                    );
+                  }),
+                  SizedBox(height: 50),
+                  Text(
+                    AppLocalizations.of(context)!.languageProficiencyTitle,
+                    style: textTheme.titleLarge,
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 20),
-                  Button(
-                      buttonText: AppLocalizations.of(context)!.next,
-                      isEnabled: controller.selectedLevel != null &&
-                      controller.selectedLevel!.isNotEmpty &&
-                          controller.selectedLanguage != null &&
-                          controller.selectedLanguage!.isNotEmpty,
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AudioListScreen()),
-                        );
-                      })
+                  Consumer<LanguageController>(
+                      builder: (context, controller, child) {
+                    return Column(
+                      children: [
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: proficiencyLevels.map((level) {
+                            return ChoiceChip(
+                                label: Text(level),
+                                selected: controller.selectedLevel == level,
+                                onSelected: (bool selected) => controller
+                                    .saveSelectedLevel(selected ? level : ''));
+                          }).toList(),
+                        ),
+                        SizedBox(height: 20),
+                        Button(
+                            buttonText: AppLocalizations.of(context)!.next,
+                            isEnabled: controller.selectedLevel != null &&
+                                controller.selectedLevel!.isNotEmpty &&
+                                controller.selectedLanguage != null &&
+                                controller.selectedLanguage!.isNotEmpty,
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AudioListScreen()),
+                              );
+                            })
+                      ],
+                    );
+                  }),
                 ],
-              );
-            }),
-          ],
-        ));
-        })
-        );
+              ));
+            }));
   }
 }

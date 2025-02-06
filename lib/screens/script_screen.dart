@@ -27,6 +27,7 @@ class _ScriptChatScreenState extends State<ScriptChatScreen> {
   late Uint8List combinedAudio;
   int apiCallCount = 0;
   static const int maxApiCalls = 1;
+  List<String> previousIds = [];
 
   @override
   void initState() {
@@ -34,14 +35,22 @@ class _ScriptChatScreenState extends State<ScriptChatScreen> {
     getAudioBytes();
   }
 
+  void addId(String newId) {
+    if (previousIds.length >= 3) {
+      previousIds.removeAt(0);
+    }
+    previousIds.add(newId);
+  }
+
   Future<Uint8List?> findAudioBytes(String title) async {
     try {
       final audioController =
           Provider.of<AudioController>(context, listen: false);
+      await audioController.loadAudioBytes();
+
       if (audioController.audioBytesList.isEmpty) {
         return null;
       }
-      await audioController.loadAudioBytes();
 
       final bytes = audioController.findBytes(title);
       return bytes;
@@ -86,36 +95,30 @@ class _ScriptChatScreenState extends State<ScriptChatScreen> {
 
   Future<void> fetchAudioBytes() async {
     try {
-      // mock 1
-      // final audioData = await ControlledGeneration().textToSpeech("1", "");
-      //   audioBytes.add(audioData);
+      int counter = 0;
+      for (int i = 0; i < widget.audioScript.script.length; i++) {
+        if (counter >= 0) break;
+        final scriptLine = widget.audioScript.script[i];
+        String previousLine =
+            (i > 0) ? widget.audioScript.script[i - 1].line : "";
+        String nextLine = (i < widget.audioScript.script.length - 1)
+            ? widget.audioScript.script[i + 1].line
+            : "";
 
-      //mock all
-      for (int i = 1; i < 4; i++) {
-        final audioData =
-            await ControlledGeneration().textToSpeech(i.toString(), "");
-        audioBytes.add(audioData);
+        bool isSpeaker1 = scriptLine.speaker == widget.audioScript.speakers[0];
+
+        final response = await ControlledGeneration().textToSpeech(
+            scriptLine.line, isSpeaker1, previousIds, previousLine, nextLine);
+
+        audioBytes.add(response.bodyBytes);
+        if (response.headers["request-id"] != null &&
+            response.headers["request-id"]!.isNotEmpty) {
+          addId(response.headers["request-id"]!);
+        }
+
+        counter++;
         apiCallCount++;
       }
-
-      // all real
-      // int counter = 0;
-      // for (var scriptLine in widget.audioScript.script) {
-      //   if (counter >= 1) break;
-
-      //   final audioData = await ControlledGeneration()
-      //       .textToSpeech(scriptLine.line, scriptLine.speaker);
-
-      //   audioBytes.add(audioData);
-      //   counter++;
-      //   apiCallCount++;
-      // }
-
-      // one by one
-      // final line1 = widget.audioScript.script[0];
-      // final audioData =
-      //     await ControlledGeneration().textToSpeech(line1.line, line1.speaker);
-      // audioBytes.add(audioData);
 
       combinedAudio = combineAudio(audioBytes);
 
@@ -176,12 +179,20 @@ class _ScriptChatScreenState extends State<ScriptChatScreen> {
             left: 0,
             right: 0,
             child: _isLoading
-                ? Text('LOADING')
+                ? Container(
+                    color: Colors.black54,
+                    padding: EdgeInsets.all(10),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.blue,
+                      ),
+                    ),
+                  )
                 : _isFinished
                     ? AudioPlayerWidget(
                         combinedAudio: combinedAudio,
                       )
-                    : Text('ERROR LOADING :('),
+                    : SizedBox.shrink(),
           ),
         ],
       ),

@@ -40,23 +40,14 @@ Tu respuesta no debe incluir las mismas palabras que esta lista: ${currentCatego
 Lista de temas: ${categories}
 ''';
     final response = await model.generateContent([Content.text(prompt)]);
-    print('Categorias: ${response.text}');
-    print(
-        'candidatesTokenCount: ${response.usageMetadata?.candidatesTokenCount}');
-    print('promptTokenCount ${response.usageMetadata?.promptTokenCount}');
-    print('totalTokenCount ${response.usageMetadata?.totalTokenCount}');
-    print('candidates.length ${response.candidates.length}');
-    print('promptFeedback ${response.promptFeedback}');
     return List<String>.from(json.decode(response.text ?? ''));
-
-    // print("prompt: ${prompt}");
 
     // final res = '["Tecnología móvil", "Videojuegos", "Cine"]';
     // return List<String>.from(json.decode(res));
   }
 
-  Future<List<Audio>> getAudioList(
-      String categories, String currentLocale, String level) async {
+  Future<List<Audio>> getAudioList(String categories, String currentLocale,
+      String level, String currentTitles) async {
     final model = GenerativeModel(
         model: 'gemini-1.5-flash',
         apiKey: apiKey,
@@ -79,16 +70,10 @@ Asegúrate de que los títulos y descripciones no reflejen nunca contenido en pr
 Evita que los titulos y descripciones sean listas o compilaciones de ejemplos de las categorias proporcionadas.
 Asegurate de que los titulos y descripciones reflejen contenido diseñado para reforzar el estudio de un idioma acorde al nivel de proficiency ${level}.
 Asegurate que los titulos y descripciones solo contengan temas que pueden ser abarcados en menos de 5 minutos, evita agregar temas muy extensos.
+Tu respuesta no debe incluir los mismos titulos ni ser muy similares a los de esta lista: ${currentTitles}.
 La lista debe estar escrita en ${currentLocale}.
 ''';
     final response = await model.generateContent([Content.text(prompt)]);
-    print('Lista de Audios: ${response.text}');
-    print(
-        'candidatesTokenCount: ${response.usageMetadata?.candidatesTokenCount}');
-    print('promptTokenCount ${response.usageMetadata?.promptTokenCount}');
-    print('totalTokenCount ${response.usageMetadata?.totalTokenCount}');
-    print('candidates.length ${response.candidates.length}');
-    print('promptFeedback ${response.promptFeedback}');
 
     // final res = '[{"title": "The Rise of Indie Games", "description": "We discuss the increasing popularity of independent video games and their impact on the gaming industry."}, {"title": "Music Streaming Wars: Spotify vs. Apple Music", "description": "A casual comparison of the two leading music streaming platforms, focusing on their key features and pricing."}, {"title": "Top 5 Productivity Apps for Students", "description": "We review five popular software applications designed to help students improve their organization and time management skills."}]';
     // final res = '[{"title": "Videojuegos indie: joyas ocultas", "description": "Exploramos algunos videojuegos indie interesantes y accesibles que ofrecen experiencias únicas y divertidas."}, {"title": "Música de los 80: sintetizadores y nostalgia", "description": "Recordamos la música de los 80, sus sintetizadores característicos y cómo ha influenciado la música actual."}, {"title": "Aplicaciones móviles que te harán la vida más fácil", "description": "Descubrimos aplicaciones para smartphones que pueden simplificar tareas cotidianas y mejorar nuestra productividad."}, {"title": "Streaming de música: Spotify vs. Apple Music", "description": "Comparamos dos plataformas populares de streaming de música, analizando sus ventajas y desventajas."}, {"title": "Software de edición de imágenes: opciones gratuitas y fáciles de usar", "description": "Revisamos algunas opciones de software gratuito para editar imágenes, ideal para principiantes."}]';
@@ -132,27 +117,23 @@ El guión debe desarrollar el tema lo suficientemente sencillo como para ser tra
 Asegúrate de que la respuesta cumpla con esta estructura, sin desviarse del formato especificado.
 Asegúrate de que el texto del guión sea válido, sin comas al final o errores de sintaxis.
 Asegúrate de que los participantes solo tengan un nombre, sin apellidos.
-Asegúrate de que si se trata de un podcast, que ninguno sea invitado, para evitar agradecimientos o lineas similare y vayan directo al tema.
-Asegúrate de que el guión refleje el temas de forma atractiva, interesante y adecuados para una discusión de menos de 3 minutos al estilo de una charla casual o un podcast.
+Asegúrate de que si se trata de un podcast, que ninguno sea invitado, para evitar agradecimientos o lineas similares y vayan directo al tema.
+Asegúrate de que el guión refleje el tema de forma atractiva e interesante para una discusión de menos de 3 minutos al estilo de una charla casual o un podcast.
 Asegúrate de que el guión no refleje nunca contenido en primera persona.
 Asegúrate de que el primer speaker es de genero masculino, y el segundo de genero femenino.
-Asegúrate de que dentro de speakers solo vengan los valores Speaker1 y Speaker2.
-Asegurate de que dentro de script, speaker tenga el valor de Speaker1 o Speaker2 según sea el caso, pero en el valor de line usa un nombre de persona, que represente al Speaker, respetando su genero.
 Asegurate de que el contenido del guión refleje contenido diseñado para reforzar el estudio del idioma ${language} acorde al nivel de proficiency ${level}.
 En caso de que el nivel de proficiency sea avanzado, utiliza palabras contraídas o abreviadas, con la intención de que simule una interacción real.
 Asegúrate de que el contenido dentro de cada line esté bien escrito, y no tenga errores ortograficos o gramaticales.
 El guión debe reflejar una interacción muy realista y humana, y con una secuencia congruente.
+Asegurate de que cada line termine con un punto final (.).
+Asegúrate de que el title sea igual a ${title}.
+Si en el guión hay pausas pequeñas, agrega un " - " entre las palabras donde va la pausa, para representar la pausa corta.
+Si en alguna parte, algún speaker debe tener un tono dudoso, agrega "..." para prepresentar ese tono.
+
+Es muy importante que te asegures de que el contenido no tiene errores ortograficos ni gramaticales, y que pongas signos de admiración cuando sea necesario.
 El guión debe estar escrito en ${language}.
 ''';
     final response = await model.generateContent([Content.text(prompt)]);
-
-    print('Guión: ${response.text}');
-    print(
-        'candidatesTokenCount: ${response.usageMetadata?.candidatesTokenCount}');
-    print('promptTokenCount ${response.usageMetadata?.promptTokenCount}');
-    print('totalTokenCount ${response.usageMetadata?.totalTokenCount}');
-    print('candidates.length ${response.candidates.length}');
-    print('promptFeedback ${response.promptFeedback}');
 
     if (response.text != null && response.text!.isNotEmpty) {
       final audioScript = AudioScript.fromJson(response.text!);
@@ -170,42 +151,39 @@ El guión debe estar escrito en ${language}.
     return Uint8List.fromList(byteValues);
   }
 
-  Future<Uint8List> textToSpeech(String text, String speaker) async {
+  Future<http.Response> textToSpeech(String text, bool isSpeaker1,
+      List<String> previousIds, String lastText, String nextText) async {
+    // dynamic
     //mock
-    String fileContent = await rootBundle.loadString('audio${text}.txt');
-    Uint8List byteList = stringToUint8List(fileContent);
-    return byteList;
+    // String fileContent = await rootBundle.loadString('audio${text}.txt');
+    // Uint8List byteList = stringToUint8List(fileContent);
+    // return byteList;
 
-    // String maleSpeaker = 'iP95p4xoKVk53GoZ742B';
+    String maleSpeaker = 'nPczCjzI2devNBz1zQrb';
+    String femaleSpeaker = 'cgSgspJ2msm6clMCkdW9';
 
-    // String femaleSpeaker = 'cgSgspJ2msm6clMCkdW9';
+    final voice = isSpeaker1 ? maleSpeaker : femaleSpeaker;
 
-    // final voice = speaker == 'Speaker1' ? maleSpeaker : femaleSpeaker;
-
-    // String url = 'https://api.elevenlabs.io/v1/text-to-speech/$voice';
-    // final response = await http.post(
-    //   Uri.parse(url),
-    //   headers: {
-    //     'accept': 'audio/mpeg',
-    //     'xi-api-key': elevenApiKey,
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: json.encode({
-    //     "text": text,
-    //     "model_id": "eleven_flash_v2_5",
-    //     "voice_settings": {"stability": .15, "similarity_boost": .75}
-    //   }),
-    // );
-    // print("res: ${response.toString()}");
-    // if (response.statusCode == 200) {
-    //   print("res AudioBytes: ${response.bodyBytes}");
-    //   return response.bodyBytes;
-    //   // final bytes = response.bodyBytes; //get the bytes ElevenLabs sent back
-    //   // await player.setAudioSource(MySource(
-    //   //     bytes)); //send the bytes to be read from the JustAudio library
-    //   // player.play(); //play the audio
-    // } else {
-    //   throw Exception('Failed to load audio');
-    // }
+    String url = 'https://api.elevenlabs.io/v1/text-to-speech/$voice';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'accept': 'audio/mpeg',
+        'xi-api-key': elevenApiKey,
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        "text": text,
+        "model_id": "eleven_flash_v2_5",
+        "previous_text": lastText,
+        "next_text": nextText,
+        "voice_settings": {"stability": .15, "similarity_boost": .75}
+      }),
+    );
+    if (response.statusCode == 200) {
+      return response;
+    } else {
+      throw Exception('Failed to load audio');
+    }
   }
 }

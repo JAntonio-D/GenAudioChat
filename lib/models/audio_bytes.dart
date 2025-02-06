@@ -6,7 +6,8 @@ import 'package:test_app/models/audio.dart';
 class AudioBytes extends Audio {
   final Uint8List bytes;
 
-  AudioBytes({required super.title, required super.description, required this.bytes});
+  AudioBytes(
+      {required super.title, required super.description, required this.bytes});
 
   @override
   Map<String, dynamic> toMap() {
@@ -17,7 +18,7 @@ class AudioBytes extends Audio {
     };
   }
 
-    factory AudioBytes.fromMap(Map<String, dynamic> map) {
+  factory AudioBytes.fromMap(Map<String, dynamic> map) {
     return AudioBytes(
       title: map['title'],
       description: map['description'],

@@ -42,19 +42,22 @@ class AudioPlayerWidgetState extends State<AudioPlayerWidget> {
       );
     } else if (controller.isPlaying != true) {
       return IconButton(
-        icon: Icon(Icons.play_arrow),
+        icon: Icon(
+          Icons.play_arrow,
+          color: Color.fromARGB(255, 237, 242, 244),
+        ),
         iconSize: 40.0,
         onPressed: controller.playAudio,
       );
     } else if (processingState != ProcessingState.completed) {
       return IconButton(
-        icon: Icon(Icons.pause),
+        icon: Icon(Icons.pause, color: Color.fromARGB(255, 237, 242, 244)),
         iconSize: 40.0,
         onPressed: controller.pauseAudio,
       );
     } else {
       return IconButton(
-        icon: Icon(Icons.replay),
+        icon: Icon(Icons.replay, color: Color.fromARGB(255, 237, 242, 244)),
         iconSize: 40.0,
         onPressed: () {
           replayAudio();
@@ -73,7 +76,7 @@ class AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Colors.blueGrey,
+        color: const Color.fromARGB(255, 43, 45, 66),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

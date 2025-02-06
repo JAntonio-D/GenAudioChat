@@ -38,10 +38,6 @@ Future<void> main() async {
           languageController.selectedLevel != null &&
           languageController.selectedLevel!.isNotEmpty;
 
-  print("selectedCategories ${categoryController.selectedCategories}");
-  print("languageController.selectedLanguage ${languageController.selectedLanguage}");
-  print("script ${audioController.audioScriptList.length}");
-
   runApp(
     MultiProvider(
       providers: [
@@ -73,11 +69,14 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
       home: Stack(
         children: [
-            isConfigurationCompleted ? AudioListScreen() : CategoryScreen(navigateTo: ""),
-           // CategoryScreen(),
+          isConfigurationCompleted
+              ? AudioListScreen()
+              : CategoryScreen(navigateTo: ""),
           GlobalLoader(),
         ],
       ),
