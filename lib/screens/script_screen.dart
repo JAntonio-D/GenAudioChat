@@ -94,9 +94,9 @@ class _ScriptChatScreenState extends State<ScriptChatScreen> {
 
   Future<void> fetchAudioBytes() async {
     try {
-      int counter = 0;
+      // int counter = 0;
       for (int i = 0; i < widget.audioScript.script.length; i++) {
-        if (counter >= 0) break;
+        //if (counter >= 0) break;
         final scriptLine = widget.audioScript.script[i];
         String previousLine =
             (i > 0) ? widget.audioScript.script[i - 1].line : "";
@@ -115,7 +115,7 @@ class _ScriptChatScreenState extends State<ScriptChatScreen> {
           addId(response.headers["request-id"]!);
         }
 
-        counter++;
+        // counter++;
         apiCallCount++;
       }
 
